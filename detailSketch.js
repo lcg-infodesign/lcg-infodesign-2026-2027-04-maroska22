@@ -15,6 +15,10 @@ let maxCor = 0;
 let minGen = Infinity;
 let maxGen = -Infinity;
 
+let rightSpace = 200;
+let topSpace = 150;
+let margin = 50; 
+
 let colorScale = {
    'positive': '#f47820',
   'negative': '#3a6ea5',
@@ -66,11 +70,41 @@ function draw() {
     
     background('black');
 
-    drawYearGlyph(data.getRow(0)); //prima riga
-}
+    //griglia per tutti i glifi = charts
+    let gridWidth = windowWidth - rightSpace - 2*margin;
+    let gridHeight = windowHeight - topSpace - 2*margin;
+
+    let lineY = topSpace + gridHeight;
+
+    let yearsNum = lastYear - firstYear + 1;
+
+    let chartWidth = gridWidth / yearsNum; 
+    let chartHeight = gridHeight-100; 
+
+    stroke('grey');
+    strokeWeight(1);
+    line(margin, lineY, margin + gridWidth, lineY); //linea temporale
+    noStroke();
+    fill('grey');
+    textSize(14);
+    textStyle(NORMAL);
+    textAlign(CENTER);
+    for (let i=0; i<yearsNum; i++) {
+      text(firstYear + i, margin + i*chartWidth +15, lineY + 20); //anni 
+    }
+
+    //glifo = chart
+    for (let rowNumber = 0; rowNumber < countryRows.length; rowNumber++) {
+      let row = countryRows[rowNumber];
+      let year = int(row.get("Year"));
+      let chartX = margin + (year-firstYear)* chartWidth;
+
+    drawChart(row, chartX, lineY, chartWidth, chartHeight);
+    }
+  }
 
 //prova glifo
-function drawYearGlyph (row) {
+function drawChart (row, x, y, w, h) {
 
     let values = [readValue(row, "positive"), readValue(row, "negative"), readValue(row, "corruption"), readValue(row, "generosity")];
     let minimums = [0, 0, 0, minGen];
@@ -78,15 +112,12 @@ function drawYearGlyph (row) {
 
     let colors = [colorScale.positive, colorScale.negative, colorScale.corruption, colorScale.generosity];
 
-    let barW = 40;
-    let X = 100;
-    let Y = 500;
-
     for (let i = 0; i < 4; i++) {
         if(isNaN(values[i])) continue; //se il dato è mancante non disegna niente
 
-        let barH = map(values[i], minimums[i], maximums[i], 0, 80);
+        let barH = map(values[i], minimums[i], maximums[i], 0, h);
+        let barW = w/4 -4; 
         fill(colors[i]);
-        rect (X + i*barW, Y-barH, barW, barH);
+        rect (x + i*barW, y-barH, barW, barH);
     }
 }
