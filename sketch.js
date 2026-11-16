@@ -196,13 +196,13 @@ function drawTitle() {
   textSize(14);
   textStyle(NORMAL);
   textFont('Inter');
-  const head2 = "I glifi-faccina rappresentati visualizzano gli indici medi di felicità per 166 paesi fra il 2005 e il 2020.";
+  const head2 = "Le emoji rappresentate visualizzano gli indici medi di felicità per 166 paesi.";
   text(head2, margin, margin+60);
 
-  const text1 = "La felicità è calcolata in base al saldo emotivo di ogni Paese.";
+  const text1 = "L'indice medio di felicità è calcolato in base al saldo emotivo registrato per ogni Paese, fra il 2005 e il 2020.";
   text(text1, margin, margin+80);
 
-  const text2 = "Clicca sui glifi-faccina per conoscere i 4 indicatori di felicità per ogni anno, relativi al Paese selezionato.";
+  const text2 = "Clicca sulle emoji per conoscere i 4 indicatori di felicità relativi ad ogni anno, del Paese selezionato.";
   text(text2, margin, margin+120);
 }
 
@@ -216,8 +216,8 @@ function drawLegend(gW) {
   let xLegend = margin + gW + margin;
   let yLegend = topSpace+20;
 
-  text("Saldo emotivo =", xLegend, yLegend);
-  text("emozioni positive - emozioni negative", xLegend, yLegend+25);
+  text("Saldo emotivo = ", xLegend, yLegend);
+  text("emozioni positive - emozioni negative", xLegend, yLegend+20);
 
   text("Gradiente colore", xLegend, yLegend+100);
   let barW = 200;
@@ -237,8 +237,8 @@ function drawLegend(gW) {
   fill('grey');
   textSize(12);
 
-  text("I glifi neutri non hanno abbastanza", xLegend, yLegend+300);
-  text("dati per determinare il saldo emotivo.", xLegend, yLegend+320);
+  text("I glifi neutri non hanno abbastanza", xLegend, yLegend+500);
+  text("dati per determinare il saldo emotivo.", xLegend, yLegend+520);
 }
 
 function mousePressed() {

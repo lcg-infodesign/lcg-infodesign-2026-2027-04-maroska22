@@ -15,9 +15,11 @@ let maxCor = 0;
 let minGen = Infinity;
 let maxGen = -Infinity;
 
-let rightSpace = 200;
-let topSpace = 150;
+let rightSpace = 200; //spazio per la legenda
+let topSpace = 150; //spazio per il titolo
 let margin = 50; 
+
+let hoverChart = null; 
 
 let colorScale = {
    'positive': '#f47820',
@@ -93,17 +95,52 @@ function draw() {
       text(firstYear + i, margin + i*chartWidth +15, lineY + 20); //anni 
     }
 
+    hoverChart = null;
     //glifo = chart
     for (let rowNumber = 0; rowNumber < countryRows.length; rowNumber++) {
       let row = countryRows[rowNumber];
       let year = int(row.get("Year"));
       let chartX = margin + (year-firstYear)* chartWidth;
 
+    //verifico se il puntatore si trov sopra i charts, evidenzio la zona e memorizzo la riga del dataset relatiova al grafico
+    if (
+      mouseX >= chartX &&
+      mouseX <= chartX + chartWidth-16 &&
+      mouseY >= lineY-chartHeight &&
+      mouseY <= lineY
+    ) {
+      hoverChart = row;
+      fill(255, 40);
+      noStroke();
+      rect(chartX, lineY-chartHeight, chartWidth-16, chartHeight);
+    }
+
     drawChart(row, chartX, lineY, chartWidth, chartHeight);
+
+    }
+
+    drawTitle();
+    drawLegend(gridWidth);
+
+    //metto qui i valori specifici degli indicatori (con l'hover), perchè nell'if prima si sarebbero disegnati sotto i grafici a barre
+    if (hoverChart != null) {
+      let ind = ["positive", "negative", "corruption", "generosity"];
+      let nameInd = ["Emozioni positive", "Emozioni negative", "Percezione corruzione", "Generosità"];
+
+      fill('white');
+      rect(mouseX + 8, mouseY + 5, 175, 70); //targhetta bianca
+      fill ('black');
+      textAlign(LEFT);
+      textSize(12);
+
+      for(let i = 0; i < 4; i++) {
+        let I = readValue(hoverChart, ind[i]);
+        text(nameInd[i] + ": " + I, mouseX + 12, mouseY + 20 + i*16); //inserisco nome e valore degli indicatori
+      }
     }
   }
 
-//prova glifo
+//disegno il chart
 function drawChart (row, x, y, w, h) {
 
     let values = [readValue(row, "positive"), readValue(row, "negative"), readValue(row, "corruption"), readValue(row, "generosity")];
@@ -120,4 +157,67 @@ function drawChart (row, x, y, w, h) {
         fill(colors[i]);
         rect (x + i*barW, y-barH, barW, barH);
     }
+}
+
+
+function drawTitle () {
+  noStroke();
+  fill('white');
+  textAlign(LEFT);
+  textSize(14);
+  textFont('Inter');
+  const textLink = "← Torna alla pagina iniziale";
+  text(textLink, margin, 30);
+
+  noStroke();
+  fill('white');
+  textSize(30);
+  textStyle(BOLD);
+  const head1 = "Happiness Index: " + selCountry;
+  text(head1, margin, margin+20);
+
+  textSize(14);
+  textStyle(NORMAL);
+  const text1 = "Per ogni anno dal 2005 al 2020 un grafico a barre visualizza i 4 indicatori di felicità del Paese.";
+  text(text1, margin, margin+60);
+}
+
+function drawLegend (gW) {
+  noStroke();
+  textAlign(LEFT);
+  textSize(12);
+  fill('white');
+
+  let yLegend = topSpace+20;
+  let xLegend = margin + gW + 25;
+
+  text("Ogni gruppo di 4 barre è un anno. Ogni barra corrisponde a:", xLegend, yLegend, 200, 50);
+
+  let ind = ["Emozioni positive", "Emozioni negative", "Percezione corruzione", "Generosità"];
+  let colors = [colorScale.positive, colorScale.negative, colorScale.corruption, colorScale.generosity];
+
+  for (let i=0; i<4; i++) {
+    fill(colors[i]);
+    rect (xLegend, yLegend + 40 + i*22, 12, 12);
+    fill('white');
+    text(ind[i], xLegend + 20, yLegend + 52 + i*22);
+  }
+
+  text("Passa il mouse sui grafici per scoprire il valore degli indicatori di felicità.", xLegend, yLegend + 170, 200, 50);
+
+  fill('grey');
+  textStyle(ITALIC);
+  text("Tutti i grafici si basano su una scala da zero al valore massimo, valido per tutti i Paesi. Laddove non compare il grafico, i dati non sono sufficienti per calcolarne gli indicatori.", xLegend, yLegend + 440, 200, 100);
+}
+
+//link per tornare alla pagina index
+function mousePressed() {
+  if(
+    mouseX >= margin &&
+    mouseX <= margin + textWidth("← Torna alla pagina iniziale") &&
+    mouseY >= 15 &&
+    mouseY <= 35
+  ) {
+    window.location.href = "index.html";
+  }
 }
